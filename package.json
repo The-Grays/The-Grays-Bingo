@@ -1,0 +1,10 @@
+{
+  "devDependencies": {
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@types/node": "^20.6.2",
+    "canvas": "^2.11.2",
+    "nodemailer": "^6.9.5"
+  }
+}

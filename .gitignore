@@ -39,6 +39,7 @@ bower_components
 build/Release
 
 # Dependency directories
+output/
 node_modules/
 jspm_packages/
 
@@ -128,3 +129,9 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Misc
+.DS_Store
+
+# Compiled JS file
+app.js
