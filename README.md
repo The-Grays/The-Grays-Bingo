@@ -1,8 +1,6 @@
-# The Grays Bingo
+# The Gray's Bingo
 
 ## Getting Started
-
-
 
 1. [Install node and npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 
