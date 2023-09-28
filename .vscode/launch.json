@@ -2,7 +2,7 @@
     "version": "0.1.0",
     "configurations": [
       {
-        "name": "Debug app.ts",
+        "name": "Debug app",
         "type": "node",
         "request": "launch",
         "cwd": "${workspaceRoot}",
