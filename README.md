@@ -12,3 +12,6 @@ Development based on [these Bingo Rules](https://www.techopedia.com/gambling-gui
 1. Run `npm run lint` to run linter
 
 1. Run `npm run app` to run app
+
+### Known Issues
+[Canvas not working in ARM version of vscode](https://github.com/Automattic/node-canvas/issues/1662)
