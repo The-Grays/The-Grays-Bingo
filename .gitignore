@@ -133,5 +133,8 @@ dist
 # Misc
 .DS_Store
 
-# Compiled JS file
-app.js
+# Compiled JS files
+out/
+
+# application config
+email_config.json

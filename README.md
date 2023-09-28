@@ -7,6 +7,8 @@ Development based on [these Bingo Rules](https://www.techopedia.com/gambling-gui
 
 1. Use `npm install` to install dependencies
 
-1. Run `npx tsc app.ts` to compile typescript
+1. Run `cp src/email_config_template.json src/email_config.json` and enter your SMTP server details
 
-1. Run `node app.js` to create and email bingo deck
+1. Run `npm run lint` to run linter
+
+1. Run `npm run app` to run app

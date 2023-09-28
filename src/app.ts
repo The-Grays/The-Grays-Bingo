@@ -1,6 +1,7 @@
-const { createCanvas, loadImage } = require("canvas");
-const fs = require("fs");
-const nodemailer = require("nodemailer");
+import * as canvas from "canvas";
+import fs from "fs";
+import nodemailer from "nodemailer";
+import email_config from "./email_config.json";
 
 const CARD_SIZE: number = 5;
 
@@ -88,7 +89,7 @@ function PrintCard(card: Map<string, number[]>) {
 }
 
 function GenerateDeck(numberOfCards: number): Map<string, number[]>[] {
-    let deck: Map<string, number[]>[] = [];
+    const deck: Map<string, number[]>[] = [];
 
     for (let i: number = 0; i < numberOfCards; i++) {
         let isInvalidCard: boolean = true;
@@ -144,12 +145,12 @@ class Coordinate {
     }
 }
 
-function DrawGrid(context: any) {
+function DrawGrid(context: canvas.CanvasRenderingContext2D) {
     context.beginPath();
     context.moveTo(50, 120);
 
     //TODO: Move grid coordinates into a JSON file
-    let gridCoordinates: Coordinate[] = [
+    const gridCoordinates: Coordinate[] = [
         new Coordinate(425, 120),
         new Coordinate(425, 425),
         new Coordinate(50, 425),
@@ -187,27 +188,27 @@ function DrawGrid(context: any) {
     ];
 
     for (let i: number = 0; i < gridCoordinates.length; i++) {
-        let coordinate: Coordinate = gridCoordinates[i];
+        const coordinate: Coordinate = gridCoordinates[i];
         context.lineTo(coordinate.x, coordinate.y);
         context.stroke();
     }
 }
 
 async function DrawCard(card: Map<string, number[]>, fileName: string) {
-    const canvasWidth = 475
-    const canvasHeight = 550
+    const canvasWidth: number = 475;
+    const canvasHeight: number = 550;
 
-    const canvas = createCanvas(canvasWidth, canvasHeight)
-    const context = canvas.getContext('2d')
+    const cardImage: canvas.Canvas = canvas.createCanvas(canvasWidth, canvasHeight);
+    const context: canvas.CanvasRenderingContext2D = cardImage.getContext('2d');
 
-    context.fillStyle = '#fff'
-    context.fillRect(0, 0, canvasWidth, canvasHeight)
+    context.fillStyle = '#fff';
+    context.fillRect(0, 0, canvasWidth, canvasHeight);
 
-    context.fillStyle = '#A9A9A9'
+    context.fillStyle = '#A9A9A9';
     context.font = "bold 15pt 'PT Sans'";
     context.fillText('The Grays', 195, 50);
 
-    const image = await loadImage('gray.png');
+    const image = await canvas.loadImage('./src/assets/gray.png');
     context.drawImage(image, 150, 25, 25, 25);
     context.drawImage(image, 295, 25, 25, 25);
 
@@ -217,11 +218,11 @@ async function DrawCard(card: Map<string, number[]>, fileName: string) {
     context.font = "bold 44pt 'PT Sans'";
     let x: number = 55;
     let y: number;
-    card.forEach((cardColumn: number[], key: string) => {
+    card.forEach((cardColumn: number[]) => {
         y = 180;
         for (let i: number = 0; i < cardColumn.length; i++) {
             const cell: number = cardColumn[i];
-            context.fillText(cell, x, y);
+            context.fillText(cell.toString(), x, y);
             y += 75;
         }
         x += 75;
@@ -229,24 +230,14 @@ async function DrawCard(card: Map<string, number[]>, fileName: string) {
 
     DrawGrid(context);
 
-    const buffer = canvas.toBuffer('image/png')
+    const buffer = cardImage.toBuffer('image/png')
     fs.writeFileSync(fileName, buffer)
 }
 
 async function SendMail(fileName: string) {
-    let transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 587,
-        secure: false,
-        requireTLS: false,
-        auth: {
-          user: '[SMTP USER ID]',
-          pass: '[SMTP PASSWORD]',
-        },
-        logger: true
-      });
+    const transporter = nodemailer.createTransport(email_config);
 
-      let info = await transporter.sendMail({
+      const info = await transporter.sendMail({
         from: '"The Gray\'s Bingo" <bingo@TheGrays.com>',
         to: "timking@bigkinglsu.com", // TODO: get email addresses from JSON file
         subject: "The Gray\'s Bingo Card",
@@ -261,14 +252,19 @@ async function SendMail(fileName: string) {
 
 async function DrawDeck(deck: Map<string, number[]>[]) {
     const timeStamp: number = Date.now();
-    const template = fs.readFileSync('./bingo.html', 'utf-8');
+    const template: string = fs.readFileSync('./src/bingo_template.html', 'utf-8');
+    const outputDirectory: string = './output';
+
+    if(!fs.existsSync(outputDirectory)) {
+        fs.mkdirSync(outputDirectory);
+    }
 
     for (let i = 0; i < deck.length; i++) {
         const card: Map<string, number[]> = deck[i];
         const fileName: string = `Bingo_${timeStamp}_${i}`;
-        await DrawCard(card, `./output/${fileName}.png`);
-        fs.writeFileSync(`./output/${fileName}.html`, template.replace("{{card_file_name}}", `${fileName}.png`));
-        SendMail(`./output/${fileName}`);
+        await DrawCard(card, `${outputDirectory}/${fileName}.png`);
+        fs.writeFileSync(`${outputDirectory}/${fileName}.html`, template.replace("{{card_file_name}}", `${fileName}.png`));
+        SendMail(`${outputDirectory}/${fileName}`);
     }
 }
 

@@ -1,0 +1,11 @@
+{
+    "host": "[SMTP Url]",
+    "port": [SMTP Port],
+    "secure": false,
+    "requireTLS": false,
+    "auth": {
+      "user": "[SMTP User Id]",
+      "pass": "[SMTP Password]"
+    },
+    "logger": true
+  }
