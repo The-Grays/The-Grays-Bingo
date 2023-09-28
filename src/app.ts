@@ -259,7 +259,7 @@ async function DrawDeck(deck: Map<string, number[]>[]) {
         fs.mkdirSync(outputDirectory);
     }
 
-    for (let i = 0; i < deck.length; i++) {
+    for (let i: number = 0; i < deck.length; i++) {
         const card: Map<string, number[]> = deck[i];
         const fileName: string = `Bingo_${timeStamp}_${i}`;
         await DrawCard(card, `${outputDirectory}/${fileName}.png`);
