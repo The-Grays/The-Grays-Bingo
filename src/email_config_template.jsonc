@@ -1,6 +1,6 @@
 {
-    "host": "[SMTP Url]",
-    "port": [SMTP Port],
+    "host": "smtp.gmail.com", //[SMTP Url]
+    "port": 587, //[SMTP Port]
     "secure": false,
     "requireTLS": false,
     "auth": {
