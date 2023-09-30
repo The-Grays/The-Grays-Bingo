@@ -21,6 +21,7 @@ export class BColumnHandler extends BaseChainHandler<ColumnRange, string> {
         };
     }
 }
+
 export class IColumnHandler extends BaseChainHandler<ColumnRange, string> {
     constructor(successorHandler: IChainHandler<ColumnRange, string>) {
         super(successorHandler);
@@ -69,6 +70,7 @@ export class GColumnHandler extends BaseChainHandler<ColumnRange, string> {
         };
     }
 }
+
 export class OColumnHandler extends BaseChainHandler<ColumnRange, string> {
     constructor(successorHandler: IChainHandler<ColumnRange, string>) {
         super(successorHandler);
