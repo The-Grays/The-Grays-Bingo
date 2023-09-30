@@ -1,9 +1,15 @@
+import { ColumnRange, BColumnHandler, IColumnHandler, NColumnHandler, GColumnHandler, OColumnHandler } from "./BingoColumnHandler";
+import { DefaultChainHander, IChainHandler } from "./ChainHandler";
+
 function GenerateRandomNumber(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 function GenerateCard(): Map<string, number[]> {
     const CARD_SIZE: number = 5;
+
+    // TODO: Get some IOC in here
+    const columnChain: IChainHandler<ColumnRange, string> = new BColumnHandler(new IColumnHandler(new NColumnHandler(new GColumnHandler(new OColumnHandler(new DefaultChainHander())))));
 
     const card: Map<string, number[]> = new Map([
         ['B', []],
@@ -14,45 +20,13 @@ function GenerateCard(): Map<string, number[]> {
     ]);
 
     card.forEach((column: number[], key: string) => {
-        let min: number = 0;
-        let max: number = 0;
-
-        switch (key) {
-            case 'B':
-                min = 1;
-                max = 15;
-                break;
-
-            case 'I':
-                min = 16;
-                max = 30;
-                break;
-
-            case 'N':
-                min = 31;
-                max = 45;
-                break;
-
-            case 'G':
-                min = 46;
-                max = 60;
-                break;
-
-            case 'O':
-                min = 61;
-                max = 75;
-                break;
-
-            default:
-                console.error('Invalid Board');
-                break;
-        }
+        const range: ColumnRange = columnChain.Handle(key);
 
         for (let i: number = 0; i < CARD_SIZE; i++) {
             let cell: number = 0;
 
             do {
-                cell = GenerateRandomNumber(min, max);
+                cell = GenerateRandomNumber(range.min, range.max);
             } while (column.includes(cell));
 
             column.push(cell);
