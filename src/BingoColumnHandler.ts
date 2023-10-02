@@ -1,18 +1,20 @@
-import { IChainHandler, BaseChainHandler } from "./ChainHandler";
+import { BaseChainHandler } from "./ChainHandler";
 
 export type ColumnRange = {
     max: number;
     min: number;
 };
 
-export class BColumnHandler extends BaseChainHandler<ColumnRange, string> {
-    constructor(successorHandler: IChainHandler<ColumnRange, string>) {
-        super(successorHandler);
-    }
+abstract class BaseColumnHandler extends BaseChainHandler<ColumnRange, string> {
+    protected abstract Column: string;
 
     CanHandleRequest(request: string): boolean {
-        return request === 'B';
+        return request === this.Column;
     }
+}
+
+export class ColumnBHandler extends BaseColumnHandler {
+    protected readonly Column: string = 'B';
 
     protected HandleRequest(): ColumnRange {
         return {
@@ -22,14 +24,8 @@ export class BColumnHandler extends BaseChainHandler<ColumnRange, string> {
     }
 }
 
-export class IColumnHandler extends BaseChainHandler<ColumnRange, string> {
-    constructor(successorHandler: IChainHandler<ColumnRange, string>) {
-        super(successorHandler);
-    }
-
-    CanHandleRequest(request: string): boolean {
-        return request === 'I';
-    }
+export class ColumnIHandler extends BaseColumnHandler {
+    protected readonly Column: string = 'I';
 
     protected HandleRequest(): ColumnRange {
         return {
@@ -39,14 +35,8 @@ export class IColumnHandler extends BaseChainHandler<ColumnRange, string> {
     }
 }
 
-export class NColumnHandler extends BaseChainHandler<ColumnRange, string> {
-    constructor(successorHandler: IChainHandler<ColumnRange, string>) {
-        super(successorHandler);
-    }
-
-    CanHandleRequest(request: string): boolean {
-        return request === 'N';
-    }
+export class ColumnNHandler extends BaseColumnHandler {
+    protected readonly Column: string = 'N';
 
     protected HandleRequest(): ColumnRange {
         return {
@@ -56,14 +46,8 @@ export class NColumnHandler extends BaseChainHandler<ColumnRange, string> {
     }
 }
 
-export class GColumnHandler extends BaseChainHandler<ColumnRange, string> {
-    constructor(successorHandler: IChainHandler<ColumnRange, string>) {
-        super(successorHandler);
-    }
-
-    CanHandleRequest(request: string): boolean {
-        return request === 'G';
-    }
+export class ColumnGHandler extends BaseColumnHandler {
+    protected readonly Column: string = 'G';
 
     protected HandleRequest(): ColumnRange {
         return {
@@ -73,14 +57,8 @@ export class GColumnHandler extends BaseChainHandler<ColumnRange, string> {
     }
 }
 
-export class OColumnHandler extends BaseChainHandler<ColumnRange, string> {
-    constructor(successorHandler: IChainHandler<ColumnRange, string>) {
-        super(successorHandler);
-    }
-
-    CanHandleRequest(request: string): boolean {
-        return request === 'O';
-    }
+export class ColumnOHandler extends BaseColumnHandler {
+    protected readonly Column: string = 'O';
 
     protected HandleRequest(): ColumnRange {
         return {

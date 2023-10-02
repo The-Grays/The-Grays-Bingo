@@ -1,4 +1,4 @@
-import { ColumnRange, BColumnHandler, IColumnHandler, NColumnHandler, GColumnHandler, OColumnHandler } from "./BingoColumnHandler";
+import { ColumnRange, ColumnBHandler, ColumnIHandler, ColumnNHandler, ColumnGHandler, ColumnOHandler } from "./BingoColumnHandler";
 import { DefaultChainHander, IChainHandler } from "./ChainHandler";
 
 function GenerateRandomNumber(min: number, max: number): number {
@@ -9,7 +9,7 @@ function GenerateCard(): Map<string, number[]> {
     const CARD_SIZE: number = 5;
 
     // TODO: Get some IOC in here
-    const columnChain: IChainHandler<ColumnRange, string> = new BColumnHandler(new IColumnHandler(new NColumnHandler(new GColumnHandler(new OColumnHandler(new DefaultChainHander())))));
+    const columnChain: IChainHandler<ColumnRange, string> = new ColumnBHandler(new ColumnIHandler(new ColumnNHandler(new ColumnGHandler(new ColumnOHandler(new DefaultChainHander())))));
 
     const card: Map<string, number[]> = new Map([
         ['B', []],
