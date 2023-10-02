@@ -10,6 +10,8 @@ Development based on [these Bingo Rules](https://www.techopedia.com/gambling-gui
 
 1. Run `npm run lint` to run linter
 
+1. Run `npm test` to run unit tests
+
 1. Run `npm run app` to run app
 
 ### Known Issues

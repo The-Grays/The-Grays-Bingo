@@ -4,7 +4,7 @@
 }
 
 export abstract class BaseChainHandler<TResponse, TRequest> implements IChainHandler<TResponse, TRequest> {
-    private successorHandler: IChainHandler<TResponse, TRequest>;
+    private readonly successorHandler: IChainHandler<TResponse, TRequest>;
 
     constructor(successorHandler: IChainHandler<TResponse, TRequest>) {
         this.successorHandler = successorHandler;
