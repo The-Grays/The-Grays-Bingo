@@ -1,15 +1,17 @@
 import * as canvas from "canvas";
 import fs from "fs";
 import nodemailer from "nodemailer";
-import email_config from "./email_config.json";
-
-const CARD_SIZE: number = 5;
+import emailConfig from "./email_config.json";
+import gridCoordinates from "./grid_coordinates.json";
+import players from "./players.json";
 
 function GenerateRandomNumber(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
   
 function GenerateCard(): Map<string, number[]> {
+    const CARD_SIZE: number = 5;
+
     const card: Map<string, number[]> = new Map([
         ['B', []],
         ['I', []],
@@ -82,7 +84,7 @@ function PrintCard(card: Map<string, number[]>) {
 
     console.log('     B    I    N    G    O');
     console.log('   __________________________');
-    for (let i: number = 0; i < CARD_SIZE; i++) {
+    for (let i: number = 0; i < bColumn.length; i++) {
         console.log(`   | ${bColumn[i]} | ${iColumn[i]} | ${nColumn[i]} | ${gColumn[i]} | ${oColumn[i]} |`);
     }
     console.log('   --------------------------');
@@ -135,57 +137,14 @@ function PrintDeck(deck: Map<string, number[]>[]) {
     console.log();
 }
 
-class Coordinate {
+type Coordinate = {
     x: number;
     y: number;
-
-    constructor(x: number, y: number ) {
-        this.x = x;
-        this.y = y;
-    }
 }
 
 function DrawGrid(context: canvas.CanvasRenderingContext2D) {
     context.beginPath();
     context.moveTo(50, 120);
-
-    //TODO: Move grid coordinates into a JSON file
-    const gridCoordinates: Coordinate[] = [
-        new Coordinate(425, 120),
-        new Coordinate(425, 425),
-        new Coordinate(50, 425),
-        new Coordinate(50, 120),
-        new Coordinate(125, 120),
-        new Coordinate(125, 425),
-        new Coordinate(200, 425),
-        new Coordinate(200, 120),
-        new Coordinate(275, 120),
-        new Coordinate(275, 425),
-        new Coordinate(350, 425),
-        new Coordinate(350, 120),
-        new Coordinate(425, 120),
-        new Coordinate(425, 425),
-        new Coordinate(425, 345),
-        new Coordinate(50, 345),
-        new Coordinate(50, 270),
-        new Coordinate(425, 270),
-        new Coordinate(425, 195),
-        new Coordinate(50, 195),
-        new Coordinate(50, 120),
-        new Coordinate(425, 120),
-        new Coordinate(425, 500),
-        new Coordinate(50, 500),
-        new Coordinate(50, 425),
-        new Coordinate(125, 425),
-        new Coordinate(125, 500),
-        new Coordinate(200, 500),
-        new Coordinate(200, 425),
-        new Coordinate(275, 425),
-        new Coordinate(275, 500),
-        new Coordinate(350, 500),
-        new Coordinate(350, 425),
-        new Coordinate(350, 500)
-    ];
 
     for (let i: number = 0; i < gridCoordinates.length; i++) {
         const coordinate: Coordinate = gridCoordinates[i];
@@ -234,40 +193,50 @@ async function DrawCard(card: Map<string, number[]>, fileName: string) {
     fs.writeFileSync(fileName, buffer)
 }
 
-async function SendMail(fileName: string) {
-    const transporter = nodemailer.createTransport(email_config);
+async function SendMail(email: string, filePath: string) {
+    const transporter = nodemailer.createTransport(emailConfig);
 
       const info = await transporter.sendMail({
         from: '"The Gray\'s Bingo" <bingo@TheGrays.com>',
-        to: "timking@bigkinglsu.com", // TODO: get email addresses from JSON file
+        to: email,
         subject: "The Gray\'s Bingo Card",
         text: "See attached\n\n",
         html: "<strong>See attached</strong></br></br>",
         headers: { 'x-cloudmta-class': 'standard' },
-        attachments: [{ path: `${fileName}.html` }, { path: `${fileName}.png` }]
+        attachments: [{ path: `${filePath}.html` }, { path: `${filePath}.png` }]
       });
     
       console.log("Message sent: %s", info.response);
 }
 
-async function DrawDeck(deck: Map<string, number[]>[]) {
-    const timeStamp: number = Date.now();
+async function DrawDeck(deck: Map<string, number[]>[], path: string, fileName: string) {
     const template: string = fs.readFileSync('./src/bingo_template.html', 'utf-8');
-    const outputDirectory: string = './output';
+    const CARD_FILE_NAME: string = "{{card_file_name}}";
 
-    if(!fs.existsSync(outputDirectory)) {
-        fs.mkdirSync(outputDirectory);
+    if(!fs.existsSync(path)) {
+        fs.mkdirSync(path);
     }
 
     for (let i: number = 0; i < deck.length; i++) {
         const card: Map<string, number[]> = deck[i];
-        const fileName: string = `Bingo_${timeStamp}_${i}`;
-        await DrawCard(card, `${outputDirectory}/${fileName}.png`);
-        fs.writeFileSync(`${outputDirectory}/${fileName}.html`, template.replace("{{card_file_name}}", `${fileName}.png`));
-        SendMail(`${outputDirectory}/${fileName}`);
+        const filePath: string = `${path}/${fileName}_${i}`;
+        await DrawCard(card, `${filePath}.png`);
+        fs.writeFileSync(`${filePath}.html`, template.replace(CARD_FILE_NAME, `${fileName}_${i}.png`));
     }
 }
 
-const deck: Map<string, number[]>[] = GenerateDeck(1);
+function EmailDeck(players: string[], deck: Map<string, number[]>[], filePath: string) {
+    for(let i: number = 0; i < players.length; i++) {
+        SendMail(players[i], `${filePath}_${i}`);
+    }
+}
+
+const OUTPUT_DIRECTORY: string = './output';
+const timeStamp: number = Date.now();
+const fileName: string = `Bingo_${timeStamp}`;
+const filePath: string = `${OUTPUT_DIRECTORY}/${fileName}`;
+
+const deck: Map<string, number[]>[] = GenerateDeck(players.length);
 PrintDeck(deck);
-DrawDeck(deck);
+DrawDeck(deck, OUTPUT_DIRECTORY, fileName);
+EmailDeck(players, deck, filePath);
