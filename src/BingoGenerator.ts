@@ -41,33 +41,41 @@ export default function GenerateDeck(numberOfCards: number): Map<string, number[
 
     for (let i: number = 0; i < numberOfCards; i++) {
         let isInvalidCard: boolean = true;
-        let card: Map<string, number[]>;
+        let newCard: Map<string, number[]>;
 
         do {
-            card = GenerateCard();
+            newCard = GenerateCard();
 
             if (deck.length === 0)
-                isInvalidCard = false;
+                break;
 
-            for (let i: number = 0; i < deck.length; i++) {
-                const element = deck[i];
-                let areCardsTheSame: boolean = true;
-
-                card.forEach((cardColumn: number[], key: string) => {
-                    const elementColumn: number[] = element.get(key) ?? [];
-
-                    const areColumnsTheSame = elementColumn.every((cell: number, index: number) => cell === cardColumn[index]);
-                    areCardsTheSame = areCardsTheSame && areColumnsTheSame;
-                });
-                isInvalidCard = isInvalidCard && areCardsTheSame;
-
-                if (!isInvalidCard)
-                    break;
-            }
+            isInvalidCard = validateCard(deck, newCard);
         } while (isInvalidCard);
 
-        deck.push(card);
+        deck.push(newCard);
     }
 
     return deck;
 }
+function validateCard(deck: Map<string, number[]>[], newCard: Map<string, number[]>) {
+    let isInvalidCard: boolean = true;
+
+    for (let i: number = 0; i < deck.length; i++) {
+        const card = deck[i];
+        let areCardsTheSame: boolean = true;
+
+        newCard.forEach((newCardColumn: number[], key: string) => {
+            const cardColumn: number[] = card.get(key) ?? [];
+
+            const areColumnsTheSame = cardColumn.every((cell: number, index: number) => cell === newCardColumn[index]);
+            areCardsTheSame = areCardsTheSame && areColumnsTheSame;
+        });
+        isInvalidCard = isInvalidCard && areCardsTheSame;
+
+        if (!isInvalidCard)
+            break;
+    }
+
+    return isInvalidCard;
+}
+

@@ -2,13 +2,13 @@ import { expect, test } from '@jest/globals';
 import { BaseChainHandler, DefaultChainHander, IChainHandler } from "../ChainHandler";
 
 test('Default CanHandleRequest Returns True', () => {
-    const sut: IChainHandler<string, string> = new DefaultChainHander();
+    const sut: IChainHandler<string, string> = new DefaultChainHander<string, string>();
 
     expect(sut.CanHandleRequest('')).toBe(true);
 });
 
 test('Default Handle Throws Exception', () => {
-    const sut: IChainHandler<string, string> = new DefaultChainHander();
+    const sut: IChainHandler<string, string> = new DefaultChainHander<string, string>();
 
     expect(() => sut.Handle('')).toThrow();
 });
@@ -34,7 +34,7 @@ test('Handle Returns Handled By A When Passed A', () => {
         }
     }
 
-    const defaultHandler: IChainHandler<string, string> = new DefaultChainHander();
+    const defaultHandler: IChainHandler<string, string> = new DefaultChainHander<string, string>();
     const handlerA: IChainHandler<string, string> = new HandlerA(defaultHandler);
     const sut: IChainHandler<string, string> = new HandlerB(handlerA);
 
@@ -62,7 +62,7 @@ test('Handle Returns Handled By B When Passed B', () => {
         }
     }
 
-    const defaultHandler: IChainHandler<string, string> = new DefaultChainHander();
+    const defaultHandler: IChainHandler<string, string> = new DefaultChainHander<string, string>();
     const handlerA: IChainHandler<string, string> = new HandlerA(defaultHandler);
     const sut: IChainHandler<string, string> = new HandlerB(handlerA);
 
@@ -70,7 +70,7 @@ test('Handle Returns Handled By B When Passed B', () => {
 });
 
 test('Handle Throws When There Is No Handler', () => {
-    const sut: IChainHandler<string, string> = new DefaultChainHander();
+    const sut: IChainHandler<string, string> = new DefaultChainHander<string, string>();
 
     expect(() => sut.Handle('C')).toThrow();
 });
