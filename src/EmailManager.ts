@@ -1,24 +1,34 @@
 import nodemailer from "nodemailer";
 import emailConfig from "./email_config.json";
+import Mail from "nodemailer/lib/mailer";
+import SMTPTransport from "nodemailer/lib/smtp-transport";
 
-async function SendMail(email: string, filePath: string) {
-    const transporter = nodemailer.createTransport(emailConfig);
+type EmailConfig = {
+  transportOptions: SMTPTransport.Options;
+  emailOptions: Mail.Options;
+};
 
-      const info = await transporter.sendMail({
-        from: '"The Gray\'s Bingo" <bingo@TheGrays.com>',
-        to: email,
-        subject: "The Gray\'s Bingo Card",
-        text: "See attached\n\n",
-        html: "<strong>See attached</strong></br></br>",
-        headers: { 'x-cloudmta-class': 'standard' },
-        attachments: [{ path: `${filePath}.html` }, { path: `${filePath}.png` }]
-      });
-    
-      console.log("Message sent: %s", info.response);
+export interface IEmailManager {
+  EmailDeck(players: string[], deck: Map<string, number[]>[], filePath: string): void;
 }
 
-export default function EmailDeck(players: string[], deck: Map<string, number[]>[], filePath: string) {
+export default class EmailManager implements IEmailManager {
+  EmailDeck(players: string[], deck: Map<string, number[]>[], filePath: string) {
     for (let i: number = 0; i < players.length; i++) {
-        SendMail(players[i], `${filePath}_${i}`);
+      this.SendMail(players[i], `${filePath}_${i}`);
     }
+  }
+
+  private async SendMail(email: string, filePath: string) {
+    const config: EmailConfig = emailConfig;
+    const transporter: nodemailer.Transporter<SMTPTransport.SentMessageInfo> = nodemailer.createTransport(config.transportOptions);
+    const mailOptions: Mail.Options = config.emailOptions;
+
+    mailOptions.to = email;
+    mailOptions.attachments = [{ path: `${filePath}.html` }, { path: `${filePath}.png` }];
+
+    const info = await transporter.sendMail(mailOptions);
+
+    console.log("Message sent: %s", info.response);
+  }
 }

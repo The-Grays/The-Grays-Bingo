@@ -1,11 +1,22 @@
 {
+  "transportOptions": {
     "host": "smtp.gmail.com", //[SMTP Url]
     "port": 587, //[SMTP Port]
     "secure": false,
     "requireTLS": false,
-    "auth": {
+    "auth": { // SMTP Credentials
       "user": "[SMTP User Id]",
       "pass": "[SMTP Password]"
     },
     "logger": true
+  },
+  "emailOptions": {
+    "from": "\"The Gray's Bingo\" <bingo@TheGrays.com>",
+    "subject": "The Gray's Bingo Card",
+    "text": "See attached\n\n",
+    "html": "<strong>See attached</strong></br></br>",
+    "headers": {
+      "x-cloudmta-class": "standard"
+    }
   }
+}
