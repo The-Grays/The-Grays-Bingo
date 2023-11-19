@@ -20,6 +20,7 @@
   "scripts": {
     "lint": "eslint . --fix",
     "app": "npx ts-node src/app.ts",
-    "test": "jest"
+    "test": "jest",
+    "build": "npx tsc -p tsconfig.json --outDir out/"
   }
 }
