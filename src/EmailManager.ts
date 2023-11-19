@@ -20,7 +20,7 @@ export default class EmailManager implements IEmailManager {
   }
 
   private async SendMail(email: string, filePath: string) {
-    const config: EmailConfig = emailConfig;
+    const config: EmailConfig = emailConfig as EmailConfig;
     const transporter: nodemailer.Transporter<SMTPTransport.SentMessageInfo> = nodemailer.createTransport(config.transportOptions);
     const mailOptions: Mail.Options = config.emailOptions;
 
