@@ -9,6 +9,8 @@ import BingoCardValidator from "./BingoCardValidator";
 import BingoCardGenerator from "./BingoCardGenerator";
 import RandomNumberGenerator from "./RandomNumberGenerator";
 
+const playerEmails: string[] = players as string[];
+
 async function ProcessDeck(deck: Map<string, number[]>[]) {
     const OUTPUT_DIRECTORY: string = './output';
     const timeStamp: number = Date.now();
@@ -17,11 +19,11 @@ async function ProcessDeck(deck: Map<string, number[]>[]) {
 
     await drawDeck(deck, OUTPUT_DIRECTORY, fileName);
     const emailManager: IEmailManager = new EmailManager(new NodeMailerWrapper()); // TODO: Get some IoC in here
-    emailManager.EmailDeck(players, deck, filePath);
+    emailManager.EmailDeck(playerEmails, deck, filePath);
 }
 
 // TODO: Get some IoC in here
 const deckGenerator: IBingoDeckGenerator = new BingoDeckGenerator(new BingoCardValidator(), new BingoCardGenerator(new RandomNumberGenerator()));
-const deck: Map<string, number[]>[] = deckGenerator.Generate(players.length);
+const deck: Map<string, number[]>[] = deckGenerator.Generate(playerEmails.length);
 printDeck(deck);
 ProcessDeck(deck);
