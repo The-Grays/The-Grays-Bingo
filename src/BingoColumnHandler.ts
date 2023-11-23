@@ -1,4 +1,4 @@
-import { BaseChainHandler } from "./ChainHandler";
+import { BaseChainHandler, DefaultChainHander, IChainHandler } from "./ChainHandler";
 
 export type ColumnRange = {
     max: number;
@@ -67,3 +67,7 @@ export class ColumnOHandler extends BaseColumnHandler {
         };
     }
 }
+
+// TODO: Get some IOC in here
+const bingoColumnHandler: IChainHandler<ColumnRange, string> = new ColumnBHandler(new ColumnIHandler(new ColumnNHandler(new ColumnGHandler(new ColumnOHandler(new DefaultChainHander())))));
+export default bingoColumnHandler;
