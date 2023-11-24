@@ -23,7 +23,7 @@ async function ProcessDeck(deck: Map<string, number[]>[]) {
 }
 
 // TODO: Get some IoC in here
-const deckGenerator: IBingoDeckGenerator = new BingoDeckGenerator(new BingoCardValidator(), new BingoCardGenerator(new RandomNumberGenerator()));
+const deckGenerator: IBingoDeckGenerator = new BingoDeckGenerator(new BingoCardValidator(), new BingoCardGenerator(new RandomNumberGenerator(Math)));
 const deck: Map<string, number[]>[] = deckGenerator.Generate(playerEmails.length);
 printDeck(deck);
 ProcessDeck(deck);
